@@ -2,6 +2,20 @@
 name: 'build JavaScript project'
 description: 'Used by the SKNUPS organisation to build JavaScript projects'
 
+inputs:
+  skip_lint:
+    description: "If 'true', do not execute 'npm run lint'"
+    required: false
+    default: 'false'
+  skip_compile:
+    description: "If 'true', do not execute 'npm run compile'"
+    required: false
+    default: 'false'
+  skip_test:
+    description: "If 'true', do not execute 'npm test'"
+    required: false
+    default: 'false'
+
 runs:
   using: 'composite'
   steps:
@@ -33,13 +47,16 @@ runs:
       run: npm ci
 
     - name: Execute ESLint
+      if: ${{ inputs.skip_lint == 'false' }}
       shell: bash
       run: npm run lint
 
     - name: Execute Typescript compiler
+      if: ${{ inputs.skip_compile == 'false' }}
       shell: bash
       run: npm run compile
 
     - name: Execute Jest
+      if: ${{ inputs.skip_test == 'false' }}
       shell: bash
       run: npm test
