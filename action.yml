@@ -1,11 +1,45 @@
 ---
-name: 'Hello World'
-description: 'Prints "Hello World" to the console.'
+name: 'build JavaScript project'
+description: 'Used by the SKNUPS organisation to build JavaScript projects'
 
 runs:
   using: 'composite'
   steps:
 
-    - name: 'Print "Hello World"'
+    - name: Install Node.js v18
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Configure npm
       shell: bash
-      run: echo "Hello World"
+      run: ${{github.action_path}}/scripts/configure-npm.sh
+
+    - name: Analyze dependencies
+      id: 'dependencies'
+      shell: bash
+      run: ${{github.action_path}}/scripts/analyze-dependencies.sh
+
+    - name: Authenticate Google Artifact Registry
+      if: steps.dependencies.outputs.authenticate == 'true'
+      uses: sknups/authenticate-google-artifact-registry-action@v1
+      with:
+        workload_identity_provider: 'projects/702125700768/locations/global/workloadIdentityPools/github-identity-pool/providers/github-identity-provider'
+        service_account: 'npm-internal-reader-gh@sknups.iam.gserviceaccount.com'
+
+    - name: Install npm dependencies
+      shell: bash
+      run: npm ci
+
+    - name: Execute ESLint
+      shell: bash
+      run: npm run lint
+
+    - name: Execute Typescript compiler
+      shell: bash
+      run: npm run compile
+
+    - name: Execute Jest
+      shell: bash
+      run: npm test

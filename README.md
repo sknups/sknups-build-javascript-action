@@ -1,3 +1,8 @@
-# github-action-template
+# sknups-build-javascript-action
 
-Template for creating a GitHub Action with MIT license.
+This GitHub Action is used by the SKNUPS organisation to build JavaScript projects.
+
+```yaml
+  - name: Build JavaScript project
+    uses: sknups/sknups-build-javascript-action@v1
+```
