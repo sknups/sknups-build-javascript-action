@@ -28,12 +28,12 @@ runs:
 
     - name: Configure npm
       shell: bash
-      run: ${{github.action_path}}/scripts/configure-npm.sh
+      run: $GITHUB_ACTION_PATH/scripts/configure-npm.sh
 
     - name: Analyze dependencies
       id: 'dependencies'
       shell: bash
-      run: ${{github.action_path}}/scripts/analyze-dependencies.sh
+      run: $GITHUB_ACTION_PATH/scripts/analyze-dependencies.sh
 
     - name: Authenticate Google Artifact Registry
       if: steps.dependencies.outputs.authenticate == 'true'
